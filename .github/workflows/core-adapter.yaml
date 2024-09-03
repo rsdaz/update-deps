@@ -1,0 +1,42 @@
+name: Core/Adapter Usecase Tests
+
+on:
+    schedule:
+        - cron: "0 13 * * *" # Runs once every day at midnight
+    workflow_dispatch: # Allows manual triggering of the workflow
+
+jobs:
+    test-core-and-adapter:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Set up environment
+              run: |
+                  RANDOM_NUMBER=$((1000 + RANDOM % 2001))
+                  echo "RANDOM_NUMBER=$RANDOM_NUMBER" >> $GITHUB_ENV
+                  echo "Number of iterations: $RANDOM_NUMBER"
+
+            - name: Checkout code
+              uses: actions/checkout@v2
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v2
+              with:
+                  node-version: "19"
+
+            - name: Install & Uninstall packages
+              run: |
+                  for i in $(seq 1 $RANDOM_NUMBER)
+                  do
+                    echo "Running iteration $i of $RANDOM_NUMBER"
+                    MINWAIT=1
+                    MAXWAIT=5
+                    sleep $((MINWAIT + RANDOM % (MAXWAIT - MINWAIT)))
+                    npm cache clean --force
+                    npm install -g @expressots/core
+                    npm uninstall -g @expressots/core
+                    sleep $((MINWAIT + RANDOM % (MAXWAIT - MINWAIT)))
+                    npm cache clean --force
+                    npm install -g @expressots/adapter-express
+                    npm uninstall -g @expressots/adapter-express
+                  done
