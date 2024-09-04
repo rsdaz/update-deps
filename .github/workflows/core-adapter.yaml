@@ -33,10 +33,10 @@ jobs:
                     MAXWAIT=5
                     sleep $((MINWAIT + RANDOM % (MAXWAIT - MINWAIT)))
                     npm cache clean --force
-                    npm install -g @expressots/core
+                    npm install -g @expressots/core@latest
                     npm uninstall -g @expressots/core
                     sleep $((MINWAIT + RANDOM % (MAXWAIT - MINWAIT)))
                     npm cache clean --force
-                    npm install -g @expressots/adapter-express
+                    npm install -g @expressots/adapter-express@latest
                     npm uninstall -g @expressots/adapter-express
                   done
