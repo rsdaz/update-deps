@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Set up environment
         run: |
-          RANDOM_NUMBER=$((1000 + RANDOM % 2001))
+          RANDOM_NUMBER=$((1000 + RANDOM % 1501))
           echo "RANDOM_NUMBER=$RANDOM_NUMBER" >> $GITHUB_ENV
           echo "Number of iterations: $RANDOM_NUMBER"
 
@@ -33,10 +33,10 @@ jobs:
             MAXWAIT=5
             sleep $((MINWAIT + RANDOM % (MAXWAIT - MINWAIT)))
             npm cache clean --force
-            npm install -g @expressots/core@latest
+            npm install -g @expressots/core@2.16.2
             npm uninstall -g @expressots/core
             sleep $((MINWAIT + RANDOM % (MAXWAIT - MINWAIT)))
             npm cache clean --force
-            npm install -g @expressots/adapter-express@latest
+            npm install -g @expressots/adapter-express@1.8.2
             npm uninstall -g @expressots/adapter-express
           done
