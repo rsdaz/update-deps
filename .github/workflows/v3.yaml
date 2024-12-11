@@ -1,4 +1,4 @@
-name: Test Core and Adapter
+name: V3 Test
 
 on:
   schedule:
@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Set up environment
         run: |
-RANDOM_NUMBER=$((800 + RANDOM % 1501))
+          RANDOM_NUMBER=$((800 + RANDOM % 1501))
           echo "RANDOM_NUMBER=$RANDOM_NUMBER" >> $GITHUB_ENV
           echo "Number of iterations: $RANDOM_NUMBER"
 
