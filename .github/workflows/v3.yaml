@@ -2,7 +2,7 @@ name: V3 Test
 
 on:
   schedule:
-    - cron: "0 */5 * * *" # Runs every 5 hours
+    - cron: "0 */4 * * *" # Runs every 4 hours
   workflow_dispatch: # Allows manual triggering of the workflow
 
 jobs:
