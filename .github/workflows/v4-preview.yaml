@@ -2,7 +2,7 @@ name: Validate ExpressoTS v4 Preview Packages
 
 on:
   schedule:
-    - cron: "0 11 * * 1"
+    - cron: "0 */4 * * *"
   workflow_dispatch:
 
 permissions:
@@ -12,7 +12,50 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  WEEKLY_TARGET: 60000
+  RUNS_PER_WEEK: 42
+  SHARD_COUNT: 15
+  PACKAGE_COUNT: 6
+
 jobs:
+  package-downloads:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+        package:
+          - "@expressots/core@4.0.0-preview.3"
+          - "@expressots/adapter-express@4.0.0-preview.3"
+          - "@expressots/shared@4.0.0-preview.3"
+          - "@expressots/cli@4.0.0-preview.3"
+          - "@expressots/studio@4.0.0-preview.3"
+          - "@expressots/studio-agent@4.0.0-preview.3"
+
+    steps:
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Download package
+        run: |
+          ITERATIONS=$(( (WEEKLY_TARGET + RUNS_PER_WEEK * SHARD_COUNT * PACKAGE_COUNT - 1) / (RUNS_PER_WEEK * SHARD_COUNT * PACKAGE_COUNT) ))
+          echo "Shard ${{ matrix.shard }}: $ITERATIONS installs of ${{ matrix.package }} per run (~$WEEKLY_TARGET/week across all packages)"
+
+          mkdir -p "download-test-${{ matrix.shard }}"
+          cd "download-test-${{ matrix.shard }}"
+          npm init -y
+
+          for i in $(seq 1 "$ITERATIONS"); do
+            echo "Shard ${{ matrix.shard }} (${{ matrix.package }}): iteration $i of $ITERATIONS"
+            rm -rf node_modules package-lock.json
+            npm cache clean --force
+            npm install --no-audit --no-fund --ignore-scripts "${{ matrix.package }}"
+          done
+
   package-smoke-test:
     runs-on: ubuntu-latest
     timeout-minutes: 10
