@@ -1,46 +1,44 @@
-name: V3 Test
+name: Validate ExpressoTS v3 Packages
 
 on:
   schedule:
-    - cron: "0 */4 * * *" # Runs every 4 hours
-  workflow_dispatch: # Allows manual triggering of the workflow
+    - cron: "0 10 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  test-core-and-adapter:
+  package-smoke-test:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        package:
+          - "@expressots/core@3.0.0"
+          - "@expressots/adapter-express@3.0.0"
+          - "@expressots/shared@3.0.0"
+          - "@expressots/cli@3.0.0"
 
     steps:
-      - name: Set up environment
-        run: |
-          RANDOM_NUMBER=$((800 + RANDOM % 1501))
-          echo "RANDOM_NUMBER=$RANDOM_NUMBER" >> $GITHUB_ENV
-          echo "Number of iterations: $RANDOM_NUMBER"
-
-      - name: Checkout code
-        uses: actions/checkout@v2
-
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: "20"
 
-      - name: Install & Uninstall packages
+      - name: Verify package metadata
         run: |
-          for i in $(seq 1 $RANDOM_NUMBER)
-          do
-            echo "Running iteration $i of $RANDOM_NUMBER"
-            MINWAIT=1
-            MAXWAIT=5
-            sleep $((MINWAIT + RANDOM % (MAXWAIT - MINWAIT)))
-            npm cache clean --force
-            npm install -g @expressots/core
-            npm uninstall -g @expressots/core
-            sleep $((MINWAIT + RANDOM % (MAXWAIT - MINWAIT)))
-            npm cache clean --force
-            npm install -g @expressots/adapter-express
-            npm uninstall -g @expressots/adapter-express
-            sleep $((MINWAIT + RANDOM % (MAXWAIT - MINWAIT)))
-            npm cache clean --force
-            npm install -g @expressots/shared
-            npm uninstall -g @expressots/shared
-          done
+          npm view "${{ matrix.package }}" name version dist.tarball
+
+      - name: Install package
+        run: |
+          mkdir package-smoke-test
+          cd package-smoke-test
+          npm init -y
+          npm install --no-audit --no-fund --ignore-scripts "${{ matrix.package }}"
+          npm ls --depth=0

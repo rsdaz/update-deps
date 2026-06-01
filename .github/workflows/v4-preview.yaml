@@ -1,8 +1,8 @@
-name: Validate ExpressoTS v2 Packages
+name: Validate ExpressoTS v4 Preview Packages
 
 on:
   schedule:
-    - cron: "0 9 * * 1"
+    - cron: "0 11 * * 1"
   workflow_dispatch:
 
 permissions:
@@ -20,10 +20,12 @@ jobs:
       fail-fast: false
       matrix:
         package:
-          - "@expressots/core@2.16.2"
-          - "@expressots/adapter-express@1.8.2"
-          - "@expressots/shared@0.3.0"
-          - "@expressots/cli@1.12.0"
+          - "@expressots/core@4.0.0-preview.3"
+          - "@expressots/adapter-express@4.0.0-preview.3"
+          - "@expressots/shared@4.0.0-preview.3"
+          - "@expressots/cli@4.0.0-preview.3"
+          - "@expressots/studio@4.0.0-preview.3"
+          - "@expressots/studio-agent@4.0.0-preview.3"
 
     steps:
       - name: Set up Node.js
