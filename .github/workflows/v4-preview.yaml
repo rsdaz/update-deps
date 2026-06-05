@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  WEEKLY_TARGET: 60000
+  WEEKLY_TARGET: 120000
   RUNS_PER_WEEK: 42
   SHARD_COUNT: 15
   PACKAGE_COUNT: 6

@@ -13,9 +13,9 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  WEEKLY_TARGET: 37500
+  WEEKLY_TARGET: 520800
   RUNS_PER_WEEK: 42
-  SHARD_COUNT: 10
+  SHARD_COUNT: 30
   PACKAGE_COUNT: 4
 
 jobs:
@@ -25,7 +25,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29]
         package:
           - "@expressots/core@3.0.0"
           - "@expressots/adapter-express@3.0.0"
